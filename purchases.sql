@@ -1,0 +1,1 @@
+INSERT INTO purchases (customer_email, product_name, quantity_purchased) VALUES ('peter@gamil','chair',5),('john@gmail.com','desk',4), ('susan@gmail.com','sofa', 4),('john@gmail.com','bench', 5);
