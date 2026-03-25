@@ -1,1 +1,0 @@
-INSERT INTO inventory (product_name, quantity_produced, price) VALUES ('chair', 33, 23.99),('desk',50, 34.5),('sofa', 47, 112.99), ('desk', 77, 134.99);
