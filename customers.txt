@@ -1,5 +1,8 @@
-id  time_created         name   email            total_spent
---  -------------------  -----  ---------------  -----------
-1   2026-03-23 08:20:33  John   john@gmail.com   0.0        
-2   2026-03-23 08:20:33  Susan  susan@gmail.com  0.0        
-3   2026-03-23 08:25:00  Peter  peter@gmail.com  0.0        
+id  time_created         name      email             
+--  -------------------  --------  ------------------
+1   2026-03-23 08:20:33  John      john@gmail.com    
+2   2026-03-23 08:20:33  Susan     susan@gmail.com   
+3   2026-03-23 08:25:00  Peter     peter@gmail.com   
+4   2026-03-26 07:50:43  Thomas    thomas@gmail.com  
+5   2026-03-26 09:48:04  Mark      mark@gmail.com    
+6   2026-03-26 10:53:16  Veronica  veronica@gmail.com

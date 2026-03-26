@@ -1,9 +1,9 @@
-#!/bin/bash
+# PATH - /bin/bash
 
-table="$1"                  # Table name passed as argument
-tableFile="${table}.txt"    # Output file based on table name
+table="$1"
+tableFile="${table}.txt"
 
-sqlite3 mainDataBase.db <<EOF
+sqlite3 mainDataBase.db << EOF
 .headers on
 .mode column
 .output $tableFile

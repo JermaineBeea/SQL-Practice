@@ -1,7 +1,7 @@
-id  price   product_name  quantity_purchased  quantity_produced  remaining
---  ------  ------------  ------------------  -----------------  ---------
-1   23.99   chair         0                   33                 33       
-2   34.5    desk          0                   50                 50       
-3   112.99  sofa          0                   47                 47       
-4   134.99  bench         0                   77                 77       
-5   233.99  laptop        0                   50                 50       
+id  price   product_name  quantity_produced
+--  ------  ------------  -----------------
+1   23.99   chair         33               
+2   34.5    desk          50               
+3   112.99  sofa          47               
+4   134.99  bench         77               
+5   233.99  laptop        50               
