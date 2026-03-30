@@ -1,0 +1,1 @@
+UPDATE inventory SET total_purchased = 0, remaining = 0;
