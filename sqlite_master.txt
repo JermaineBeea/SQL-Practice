@@ -1,0 +1,26 @@
+type   name             tbl_name         rootpage  sql                                                         
+-----  ---------------  ---------------  --------  ------------------------------------------------------------
+table  sqlite_sequence  sqlite_sequence  3         CREATE TABLE sqlite_sequence(name,seq)                      
+
+table  customers        customers        2         CREATE TABLE customers (id INTEGER PRIMARY KEY AUTOINCREMENT
+                                                   ,time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, name TEXT
+                                                    NOT NULL,email TEXT)                                       
+
+table  inventory        inventory        4         CREATE TABLE "inventory" (id INTEGER PRIMARY KEY AUTOINCREME
+                                                   NT, price REAL DEFAULT 0, product_name TEXT NOT NULL, quanti
+                                                   ty_produced INTEGER DEFAULT 0, total_purchased INTEGER DEFAU
+                                                   LT 0, remaining INTEGER DEFAULT 0)                          
+
+table  purchases        purchases        5         CREATE TABLE purchases (id INTEGER PRIMARY KEY AUTOINCREMENT
+                                                   , date_purchase TIMESTAMP DEFAULT CURRENT_TIMESTAMP, custome
+                                                   r_email TEXT NOT NULL, product_name TEXT NOT NULL, quantity_
+                                                   purchased INTEGER NOT NULL)                                 
+
+view   inventory_view   inventory_view   0         CREATE VIEW inventory_view AS                               
+                                                   SELECT i.*, COALESCE(SUM(p.quantity_purchased),0) AS total_p
+                                                   urchased,                                                   
+                                                   i.quantity_produced - COALESCE(SUM(p.quantity_purchased),0) 
+                                                   AS remaining                                                
+                                                   FROM inventory AS i LEFT JOIN purchases AS p ON i.product_na
+                                                   me=p.product_name                                           
+                                                   GROUP BY i.product_name ORDER BY i.id ASC                   

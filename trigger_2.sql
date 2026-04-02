@@ -1,4 +1,3 @@
-DROP TRIGGER trigger_2;
 CREATE TRIGGER trigger_2
 AFTER INSERT ON purchases
 BEGIN
