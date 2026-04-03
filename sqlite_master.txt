@@ -15,12 +15,3 @@ table  purchases        purchases        5         CREATE TABLE purchases (id IN
                                                    , date_purchase TIMESTAMP DEFAULT CURRENT_TIMESTAMP, custome
                                                    r_email TEXT NOT NULL, product_name TEXT NOT NULL, quantity_
                                                    purchased INTEGER NOT NULL)                                 
-
-view   inventory_view   inventory_view   0         CREATE VIEW inventory_view AS                               
-                                                   SELECT i.*, COALESCE(SUM(p.quantity_purchased),0) AS total_p
-                                                   urchased,                                                   
-                                                   i.quantity_produced - COALESCE(SUM(p.quantity_purchased),0) 
-                                                   AS remaining                                                
-                                                   FROM inventory AS i LEFT JOIN purchases AS p ON i.product_na
-                                                   me=p.product_name                                           
-                                                   GROUP BY i.product_name ORDER BY i.id ASC                   
