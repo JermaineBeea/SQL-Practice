@@ -1,17 +1,27 @@
-type   name             tbl_name         rootpage  sql                                                         
------  ---------------  ---------------  --------  ------------------------------------------------------------
-table  sqlite_sequence  sqlite_sequence  3         CREATE TABLE sqlite_sequence(name,seq)                      
+type     name             tbl_name         rootpage  sql                                                         
+-------  ---------------  ---------------  --------  ------------------------------------------------------------
+table    sqlite_sequence  sqlite_sequence  3         CREATE TABLE sqlite_sequence(name,seq)                      
 
-table  customers        customers        2         CREATE TABLE customers (id INTEGER PRIMARY KEY AUTOINCREMENT
-                                                   ,time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, name TEXT
-                                                    NOT NULL,email TEXT)                                       
+table    customers        customers        2         CREATE TABLE customers (id INTEGER PRIMARY KEY AUTOINCREMENT
+                                                     ,time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, name TEXT
+                                                      NOT NULL,email TEXT)                                       
 
-table  inventory        inventory        4         CREATE TABLE "inventory" (id INTEGER PRIMARY KEY AUTOINCREME
-                                                   NT, price REAL DEFAULT 0, product_name TEXT NOT NULL, quanti
-                                                   ty_produced INTEGER DEFAULT 0, total_purchased INTEGER DEFAU
-                                                   LT 0, remaining INTEGER DEFAULT 0)                          
+table    inventory        inventory        4         CREATE TABLE "inventory" (id INTEGER PRIMARY KEY AUTOINCREME
+                                                     NT, price REAL DEFAULT 0, product_name TEXT NOT NULL, quanti
+                                                     ty_produced INTEGER DEFAULT 0, total_purchased INTEGER DEFAU
+                                                     LT 0, remaining INTEGER DEFAULT 0)                          
 
-table  purchases        purchases        5         CREATE TABLE purchases (id INTEGER PRIMARY KEY AUTOINCREMENT
-                                                   , date_purchase TIMESTAMP DEFAULT CURRENT_TIMESTAMP, custome
-                                                   r_email TEXT NOT NULL, product_name TEXT NOT NULL, quantity_
-                                                   purchased INTEGER NOT NULL)                                 
+table    purchases        purchases        5         CREATE TABLE purchases (id INTEGER PRIMARY KEY AUTOINCREMENT
+                                                     , date_purchase TIMESTAMP DEFAULT CURRENT_TIMESTAMP, custome
+                                                     r_email TEXT NOT NULL, product_name TEXT NOT NULL, quantity_
+                                                     purchased INTEGER NOT NULL)                                 
+
+trigger  trigger_1        purchases        0         CREATE TRIGGER trigger_1                                    
+                                                     AFTER INSERT ON purchases                                   
+                                                     BEGIN                                                       
+                                                         UPDATE inventory SET                                    
+                                                         total_purchased = total_purchased + NEW.quantity_purchas
+                                                     ed,                                                         
+                                                         remaining = quantity_produced - total_purchased         
+                                                         WHERE inventory.product_name = NEW.product_name;        
+                                                     END                                                         
