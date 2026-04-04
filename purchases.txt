@@ -16,3 +16,5 @@ id  date_purchase        customer_email   product_name  quantity_purchased
 14  2026-04-02 11:25:20  susan@gmail.com  chair         3                 
 15  2026-04-03 14:00:29  susan@gmail.com  chair         3                 
 16  2026-04-04 09:26:12  peter@gmail.com  desk          1                 
+17  2026-04-04 09:31:50  peter@gmail.com  desk          1                 
+18  2026-04-04 09:33:13  peter@gmail.com  desk          1                 

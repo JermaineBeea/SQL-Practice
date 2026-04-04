@@ -1,0 +1,6 @@
+CREATE VIEW inventory_view AS
+    SELECT inventory.*, COALESCE(SUM(quantity_purchased),0) AS total_purchased,
+    (quantity_produced - COALESCE(SUM(quantity_purchased),0)) AS remaining
+    FROM inventory LEFT JOIN purchases ON inventory.product_name = purchases.product_name
+    GROUP BY inventory.product_name
+;
