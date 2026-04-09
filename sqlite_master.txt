@@ -16,12 +16,23 @@ table    purchases        purchases        5         CREATE TABLE purchases (id 
                                                      r_email TEXT NOT NULL, product_name TEXT NOT NULL, quantity_
                                                      purchased INTEGER NOT NULL)                                 
 
+view     inventory_view   inventory_view   0         CREATE VIEW inventory_view AS                               
+                                                                                                                 
+                                                     SELECT                                                      
+                                                         inventory.*, COALESCE(SUM(p.quantity_purchased),0) AS to
+                                                     tals,                                                       
+                                                         quantity_produced - COALESCE(SUM(p.quantity_purchased),0
+                                                     ) AS remaining                                              
+                                                         FROM inventory LEFT JOIN purchases AS p                 
+                                                         ON inventory.product_name = p.product_name              
+                                                         GROUP BY inventory.product_name                         
+
 trigger  trigger_1        purchases        0         CREATE TRIGGER trigger_1                                    
                                                      AFTER INSERT ON purchases                                   
                                                      BEGIN                                                       
-                                                         UPDATE inventory SET                                    
-                                                         total_purchased = total_purchased + NEW.quantity_purchas
-                                                     ed,                                                         
-                                                         remaining = quantity_produced - total_purchased         
+                                                         UPDATE inventory                                        
+                                                         SET total_purchased = total_purchased + NEW.total_purcha
+                                                     sed,                                                        
+                                                         remaining = remaining - NEW.total_purchased             
                                                          WHERE inventory.product_name = NEW.product_name;        
                                                      END                                                         

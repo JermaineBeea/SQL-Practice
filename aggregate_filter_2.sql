@@ -1,10 +1,11 @@
-WITH aggregates AS (
-    SELECT product_name, COUNT(product_name) AS counts
+WITH reference AS (
+    SELECT product_name,
+    SUM(quantity_purchased) AS totals
     FROM purchases
     GROUP BY product_name
 )
 SELECT product_name
-FROM aggregates
-WHERE counts = (
-    SELECT MAX(counts) FROM aggregates
+FROM reference
+WHERE totals = (
+    SELECT MAX(totals) FROM reference
 );

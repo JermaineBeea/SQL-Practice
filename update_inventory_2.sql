@@ -1,12 +1,13 @@
-UPDATE inventory SET
-    total_purchased = reference.totals,
-    remaining = quantity_produced - reference.totals
-    FROM (
-        SELECT product_name, SUM(quantity_purchased) AS totals
+UPDATE inventory
+SET 
+    total_purchased = (
+        SELECT SUM(quantity_purchased)
         FROM purchases
-        GROUP BY purchases.product_name ORDER BY product_name DESC
-    ) AS reference
-    
-    WHERE inventory.product_name = reference.product_name
+        WHERE purchases.product_name = inventory.product_name
+    ),
+    remaining = quantity_produced - (
+        SELECT SUM(quantity_purchased)
+        FROM purchases
+        WHERE purchases.product_name = inventory.product_name
+    )
 ;
-    

@@ -1,12 +1,11 @@
-UPDATE inventory SET
-    total_purchased = (
-        SELECT COALESCE(SUM(p.quantity_purchased),0)
-        FROM purchases AS p
-        WHERE p.product_name = inventory.product_name
-    ),
-    remaining = quantity_produced - (
-        SELECT COALESCE(SUM(p.quantity_purchased),0)
-        FROM purchases AS p
-        WHERE p.product_name = inventory.product_name
-    )
+WITH reference AS (
+    SELECT product_name, SUM(quantity_purchased) AS totals
+    FROM purchases
+    GROUP BY product_name
+)
+UPDATE inventory
+SET total_purchased = reference.totals,
+    remaining = quantity_produced - reference.totals
+FROM reference
+WHERE inventory.product_name = reference.product_name
 ;

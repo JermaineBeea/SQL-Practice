@@ -1,10 +1,9 @@
 SELECT product_name
 FROM purchases
 GROUP BY product_name
-HAVING COUNT(*) = (
-    SELECT MAX(counts)
-    FROM (
-        SELECT COUNT(product_name) AS COUNTS
+HAVING SUM(quantity_purchased) = (
+    SELECT MAX(totals) FROM (
+        SELECT SUM(quantity_purchased) AS totals
         FROM purchases
         GROUP BY product_name
     )
