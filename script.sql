@@ -1,5 +1,12 @@
-BEGIN;
-    INSERT INTO purchases (customer_email, product_name, quantity_purchased) VALUES ('mark@gmail.com', 'sofa', 5);
-    INSERT INTO purchases (customer_email, product_name, quantity_purchased) VALUES ('susan@gmail.com', 'chair', 7);
-    INSERT OR IGNORE INTO purchases (customer_email, product_name, quantity_purchased) VALUES ('peter@gmail.com', 'bench', 11);
-COMMIT;
+
+WITH reference AS (
+    SELECT *, (
+        inventory.price * purchases.quantity_purchased
+    ) AS total_expenditure
+    FROM purchases LEFT JOIN inventory ON purchases.product_name = inventory.product_name
+)
+
+SELECT customer_email, SUM(reference.total_expenditure) AS gross_expenditure
+FROM reference
+GROUP BY reference.customer_email;
+

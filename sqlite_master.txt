@@ -11,13 +11,20 @@ table  inventory        inventory        4         CREATE TABLE "inventory" (id 
                                                    ty_produced INTEGER DEFAULT 0, total_purchased INTEGER DEFAU
                                                    LT 0, remaining INTEGER DEFAULT 0)                          
 
-table  purchases_old    purchases_old    6         CREATE TABLE "purchases_old" (                              
+table  purchases        purchases        5         CREATE TABLE "purchases" (                                  
                                                        id INTEGER PRIMARY KEY AUTOINCREMENT,                   
                                                        date_purchase TIMESTAMP DEFAULT CURRENT_TIMESTAMP,      
                                                        customer_email TEXT NOT NULL,                           
                                                        product_name TEXT NOT NULL,                             
                                                        quantity_purchased INTEGER NOT NULL CHECK(              
-                                                           NOT(customer_email = 'peter@gmail.com' AND quantity_
-                                                   purchased >= 10)                                            
+                                                           NOT(TRIM(LOWER(customer_email)) = 'peter@gmail.com' 
+                                                   AND quantity_purchased >= 10)                               
                                                        )                                                       
                                                    )                                                           
+
+view   running_view     running_view     0         CREATE VIEW running_view AS                                 
+                                                       SELECT *, SUM(quantity_purchased) OVER (                
+                                                           ORDER BY date_purchase, id                          
+                                                           ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING    
+                                                       ) AS totals                                             
+                                                       FROM purchases                                          
