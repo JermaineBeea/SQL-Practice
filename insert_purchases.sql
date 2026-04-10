@@ -1,2 +1,3 @@
 INSERT INTO purchases (customer_email, product_name, quantity_purchased)
-VALUES ('thomas@gmail.com ', 'bench', 3);
+VALUES ('peter@gmail.com', 'bench', 11)
+RETURNING *;

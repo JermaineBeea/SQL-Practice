@@ -1,2 +1,0 @@
-SELECT *, COUNT(product_name) OVER(product_name) AS counts
-FROM purchases;
