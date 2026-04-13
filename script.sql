@@ -1,11 +1,9 @@
-SELECT
-    id,
-    customer_email,
-    date_purchase,
-    quantity_purchased,
-    quantity_purchased
-      - LAG(quantity_purchased) OVER (
-            PARTITION BY customer_email
-            ORDER BY date_purchase, id
-        ) AS change_from_last_purchase
-FROM purchases;
+CREATE TRIGGER trigger_1
+AFTER UPDATE ON inventory
+FOR EACH ROW
+WHEN NEW.product_name <> OLD.product_name
+BEGIN
+    UPDATE purchases
+    SET product_name = NEW.product_name
+    WHERE purchases.product_name = OLD.product_name;
+END;

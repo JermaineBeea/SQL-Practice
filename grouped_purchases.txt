@@ -1,7 +1,0 @@
-product_name  totals
-------------  ------
-bench         5     
-chair         13    
-desk          7     
-laptop        7     
-sofa          18    

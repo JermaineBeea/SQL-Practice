@@ -4,8 +4,7 @@ WITH reference AS (
     GROUP BY product_name
 )
 UPDATE inventory
-SET total_purchased = reference.totals,
-    remaining = quantity_produced - reference.totals
+SET total_purchased = reference.totals
 FROM reference
 WHERE inventory.product_name = reference.product_name
 ;

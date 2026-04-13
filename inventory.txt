@@ -1,6 +1,6 @@
-id  price   product_name  quantity_produced  total_purchased  remaining
---  ------  ------------  -----------------  ---------------  ---------
-1   23.99   chair         15                 13               2        
-2   34.5    desk          25                 7                18       
-3   112.99  sofa          35                 18               17       
-4   134.99  bench         45                 11               34       
+id  price  product_name  quantity_produced  total_purchased  remaining  revenue
+--  -----  ------------  -----------------  ---------------  ---------  -------
+1   67.99  chair         55                 20               35         1359.8 
+2   23.89  desk          66                 19               47         453.91 
+3   77.89  sofa          44                 18               26         1402.02
+4   54.99  wooded bench  67                 16               51         879.84 

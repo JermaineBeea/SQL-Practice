@@ -1,30 +1,93 @@
-type   name             tbl_name         rootpage  sql                                                         
------  ---------------  ---------------  --------  ------------------------------------------------------------
-table  sqlite_sequence  sqlite_sequence  3         CREATE TABLE sqlite_sequence(name,seq)                      
+type     name                    tbl_name                rootpage  sql                                                         
+-------  ----------------------  ----------------------  --------  ------------------------------------------------------------
+table    sqlite_sequence         sqlite_sequence         3         CREATE TABLE sqlite_sequence(name,seq)                      
 
-table  customers        customers        2         CREATE TABLE customers (id INTEGER PRIMARY KEY AUTOINCREMENT
-                                                   ,time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, name TEXT
-                                                    NOT NULL,email TEXT)                                       
+table    customers               customers               2         CREATE TABLE customers (id INTEGER PRIMARY KEY AUTOINCREMENT
+                                                                   ,time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, name TEXT
+                                                                    NOT NULL,email TEXT)                                       
 
-table  inventory        inventory        4         CREATE TABLE "inventory" (id INTEGER PRIMARY KEY AUTOINCREME
-                                                   NT, price REAL DEFAULT 0, product_name TEXT NOT NULL, quanti
-                                                   ty_produced INTEGER DEFAULT 0, total_purchased INTEGER DEFAU
-                                                   LT 0, remaining INTEGER DEFAULT 0)                          
+table    purchases               purchases               5         CREATE TABLE "purchases" (                                  
+                                                                       id INTEGER PRIMARY KEY AUTOINCREMENT,                   
+                                                                       date_purchase TIMESTAMP DEFAULT CURRENT_TIMESTAMP,      
+                                                                       customer_email TEXT NOT NULL,                           
+                                                                       product_name TEXT NOT NULL,                             
+                                                                       quantity_purchased INTEGER NOT NULL CHECK(              
+                                                                           NOT(TRIM(LOWER(customer_email)) = 'peter@gmail.com' 
+                                                                   AND quantity_purchased >= 10)                               
+                                                                       )                                                       
+                                                                   )                                                           
 
-table  purchases        purchases        5         CREATE TABLE "purchases" (                                  
-                                                       id INTEGER PRIMARY KEY AUTOINCREMENT,                   
-                                                       date_purchase TIMESTAMP DEFAULT CURRENT_TIMESTAMP,      
-                                                       customer_email TEXT NOT NULL,                           
-                                                       product_name TEXT NOT NULL,                             
-                                                       quantity_purchased INTEGER NOT NULL CHECK(              
-                                                           NOT(TRIM(LOWER(customer_email)) = 'peter@gmail.com' 
-                                                   AND quantity_purchased >= 10)                               
-                                                       )                                                       
-                                                   )                                                           
+table    inventory               inventory               6         CREATE TABLE "inventory" (                                  
+                                                                       id INTEGER PRIMARY KEY AUTOINCREMENT,                   
+                                                                       price REAL DEFAULT 0, product_name TEXT NOT NULL,       
+                                                                       quantity_produced INTEGER DEFAULT 0,                    
+                                                                       total_purchased INTEGER DEFAULT 0 CHECK (total_purchased
+                                                                    < quantity_produced OR total_purchased = quantity_produced)
+                                                                   ,                                                           
+                                                                       remaining GENERATED ALWAYS AS (quantity_produced - total
+                                                                   _purchased)                                                 
+                                                                   , revenue INTEGER GENARTED ALWAYS AS (price * total_purchase
+                                                                   d))                                                         
 
-view   running_view     running_view     0         CREATE VIEW running_view AS                                 
-                                                       SELECT *, SUM(quantity_purchased) OVER (                
-                                                           ORDER BY date_purchase, id                          
-                                                           ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING    
-                                                       ) AS totals                                             
-                                                       FROM purchases                                          
+index    p_index_1               purchases               4         CREATE INDEX p_index_1 ON purchases(product_name)           
+
+view     inventory_availability  inventory_availability  0         CREATE VIEW inventory_availability AS                       
+                                                                   SELECT *,                                                   
+                                                                   (                                                           
+                                                                       CAST(remaining AS REAL)/NULLIF(quantity_produced, 0)    
+                                                                   ) AS ratios,                                                
+                                                                   CASE                                                        
+                                                                       WHEN remaining = 0 THEN 'out of stock'                  
+                                                                       WHEN CAST(remaining AS REAL)/NULLIF(quantity_produced,0)
+                                                                    < 0.3 THEN 'low stock'                                     
+                                                                       ELSE 'in stock'                                         
+                                                                   END AS status                                               
+                                                                   FROM inventory                                              
+
+trigger  insert_purchases        purchases               0         CREATE TRIGGER insert_purchases                             
+                                                                   AFTER INSERT ON purchases                                   
+                                                                   BEGIN                                                       
+                                                                       UPDATE inventory                                        
+                                                                       SET                                                     
+                                                                           total_purchased = total_purchased + NEW.quantity_pur
+                                                                   chased                                                      
+                                                                           WHERE inventory.product_name = NEW.product_name     
+                                                                           ;                                                   
+                                                                   END                                                         
+
+view     purchases_view          purchases_view          0         CREATE VIEW purchases_view AS                               
+                                                                   SELECT product_name, SUM(quantity_purchased) AS net_purchase
+                                                                   s                                                           
+                                                                   FROM purchases                                              
+                                                                   GROUP BY product_name                                       
+
+trigger  delete_purchases        purchases               0         CREATE TRIGGER delete_purchases                             
+                                                                   AFTER DELETE ON purchases                                   
+                                                                   BEGIN                                                       
+                                                                       UPDATE inventory                                        
+                                                                       SET                                                     
+                                                                           total_purchased = total_purchased - OLD.quantity_pur
+                                                                   chased                                                      
+                                                                       WHERE inventory.product_name = OLD.product_name         
+                                                                       ;                                                       
+                                                                   END                                                         
+
+trigger  update_purchases        purchases               0         CREATE TRIGGER update_purchases                             
+                                                                   AFTER UPDATE ON purchases                                   
+                                                                   BEGIN                                                       
+                                                                       UPDATE inventory                                        
+                                                                       SET                                                     
+                                                                           total_purchased = total_purchased + (NEW.quantity_pu
+                                                                   rchased - OLD.quantity_purchased)                           
+                                                                       WHERE inventory.product_name = OLD.product_name         
+                                                                       ;                                                       
+                                                                   END                                                         
+
+trigger  update_inventory        inventory               0         CREATE TRIGGER update_inventory                             
+                                                                   AFTER UPDATE ON inventory                                   
+                                                                   BEGIN                                                       
+                                                                       UPDATE purchases                                        
+                                                                           SET product_name = NEW.product_name                 
+                                                                           WHERE purchases.product_name = NEW.product_name     
+                                                                           ;                                                   
+                                                                   END                                                         
