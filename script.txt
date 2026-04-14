@@ -1,0 +1,14 @@
+WITH grouped AS(
+    SELECT 
+    c.name, SUM(p.quantity_purchased) AS totals
+    FROM
+        purchases AS p LEFT JOIN customers AS c 
+        ON p.customer_email = c.email 
+    GROUP BY c.name
+)
+SELECT name FROM grouped
+WHERE totals = (
+    SELECT MAX(totals) FROM grouped
+)
+;
+

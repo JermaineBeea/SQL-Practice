@@ -4,7 +4,7 @@ table  sqlite_sequence  sqlite_sequence  3         CREATE TABLE sqlite_sequence(
 
 table  customers        customers        2         CREATE TABLE customers (id INTEGER PRIMARY KEY AUTOINCREMENT
                                                    ,time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, name TEXT
-                                                    NOT NULL,email TEXT)                                       
+                                                    NOT NULL,email TEXT, customer_purchases INTEGER DEFAULT 0) 
 
 table  purchases        purchases        5         CREATE TABLE "purchases" (                                  
                                                        id INTEGER PRIMARY KEY AUTOINCREMENT,                   
@@ -23,10 +23,10 @@ table  inventory        inventory        6         CREATE TABLE "inventory" (
                                                        quantity_produced INTEGER DEFAULT 0,                    
                                                        total_purchased INTEGER DEFAULT 0 CHECK (total_purchased
                                                     < quantity_produced OR total_purchased = quantity_produced)
-                                                   ,                                                           
-                                                       remaining GENERATED ALWAYS AS (quantity_produced - total
-                                                   _purchased)                                                 
-                                                   , revenue INTEGER GENARTED ALWAYS AS (price * total_purchase
-                                                   d))                                                         
+                                                   , remaining                                                 
+                                                               INTEGER GENERATED ALWAYS AS (quantity_produced -
+                                                    total_purchased) VIRTUAL, revenue                          
+                                                               INTEGER GENERATED ALWAYS AS (price * total_purch
+                                                   ased) VIRTUAL)                                              
 
 index  p_index_1        purchases        4         CREATE INDEX p_index_1 ON purchases(product_name)           
