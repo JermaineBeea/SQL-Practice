@@ -1,9 +1,11 @@
-CREATE TRIGGER trigger_1
-AFTER UPDATE ON inventory
-FOR EACH ROW
-WHEN NEW.product_name <> OLD.product_name
-BEGIN
-    UPDATE purchases
-    SET product_name = NEW.product_name
-    WHERE purchases.product_name = OLD.product_name;
-END;
+SELECT *,  (
+    SUM(quantity_purchased) OVER (
+        ORDER BY date_purchase, ID
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) * ROW_NUMBER() OVER (
+        ORDER BY date_purchase, ID
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    )
+) AS product_totals
+FROM purchases
+;
