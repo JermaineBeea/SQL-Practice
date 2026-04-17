@@ -1,26 +1,31 @@
-WITH product_totals AS (
-    SELECT
-        TRIM(LOWER(customer_email)) AS customer_email,
-        product_name,
-        SUM(quantity_purchased) AS total_per_product
-    FROM purchases
-    GROUP BY customer_email, product_name
-),
-ranked AS (
+-- Most popular product(s) per customer.
+-- If multiple products tie for highest quantity, all are returned.
+
+WITH
+grouped_purchase AS (
     SELECT
         customer_email,
         product_name,
-        total_per_product,
-        ROW_NUMBER() OVER (
+        SUM(quantity_purchased) AS customer_totals
+    FROM purchases
+    GROUP BY customer_email, product_name
+),
+ranked_purchases AS (
+    SELECT
+        customer_email,
+        product_name,
+        customer_totals,
+        RANK() OVER (
             PARTITION BY customer_email
-            ORDER BY total_per_product DESC, product_name ASC
-        ) AS row_number
-    FROM product_totals
+            ORDER BY customer_totals DESC
+        ) AS sub_group_ranking
+    FROM grouped_purchase
 )
 SELECT
-    customer_email,
-    product_name,
-    total_per_product
-FROM ranked
-WHERE row_number = 1
-ORDER BY customer_email;
+    customers.name,
+    STRING_AGG(product_name, ',') AS popluar_products
+FROM customers
+JOIN ranked_purchases
+ON customers.email = ranked_purchases.customer_email
+WHERE ranked_purchases.sub_group_ranking = 1
+GROUP BY customers.name;

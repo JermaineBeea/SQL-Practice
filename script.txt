@@ -1,0 +1,32 @@
+-- CUSTOMER VARIANCE
+
+-- This script calculates the variance of purchases per customer.
+-- Varinace is a measure of dispersion around the mean.
+-- Can be used to identify customers with most stochastic purchasing habits.
+-- A practical example could be to determine which customer to push a specific deal towards dependant in their purchasing volatitility.
+
+-- STEPS TO SOLUTION
+
+-- Aggregate purchases over customer_email window by computing mean of purchases. 
+-- Aggregated puschases wil have fields, customer_email,  quantity_purchased, and squre_difference
+-- We preserve quantity_purchased to compute the square difference to mean. 
+-- Group by customer email where mean(squre_difference) is applied to each group.
+
+WITH 
+
+reference AS (
+    SELECT customer_email, quantity_purchased,
+    (
+        POWER(
+            quantity_purchased - (
+            AVG(quantity_purchased) OVER (
+                PARTITION BY customer_email
+            )
+        ), 2)
+    ) AS square_difference
+    FROM purchases
+)
+
+SELECT customer_email, AVG(square_difference) AS variance
+GROUP BY customer_email;
+
